@@ -1,0 +1,36 @@
+{
+  "name": "purescript-generics-rep",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/purescript/purescript-generics-rep.git"
+  },
+  "dependencies": {
+    "purescript-enums": "^3.2.1",
+    "purescript-foldable-traversable": "^3.0.0",
+    "purescript-monoid": "^3.0.0",
+    "purescript-prelude": "^3.0.0",
+    "purescript-symbols": "^3.0.0"
+  },
+  "devDependencies": {
+    "purescript-assert": "^3.0.0",
+    "purescript-console": "^3.0.0"
+  },
+  "homepage": "https://github.com/purescript/purescript-generics-rep",
+  "version": "5.3.0",
+  "_release": "5.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v5.3.0",
+    "commit": "7b6a6173e5c6d3978d2d66d15aba84a12372fca1"
+  },
+  "_source": "https://github.com/purescript/purescript-generics-rep.git",
+  "_target": "^5.2.0",
+  "_originalSource": "purescript-generics-rep"
+}

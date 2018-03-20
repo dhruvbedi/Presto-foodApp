@@ -1,0 +1,30 @@
+{
+  "name": "purescript-spec",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "test",
+    "externs",
+    "tmp",
+    "output",
+    "tools"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/owickstrom/purescript-spec.git"
+  },
+  "dependencies": {
+    "purescript-console": "^3.0.0",
+    "purescript-aff": "^3.0.0",
+    "purescript-exceptions": "^3.0.0",
+    "purescript-strings": "^3.0.0",
+    "purescript-prelude": "^3.0.0",
+    "purescript-transformers": "^3.0.0",
+    "purescript-node-process": "^4.0.0",
+    "purescript-monoid": "^3.0.0",
+    "purescript-foldable-traversable": "^3.0.0",
+    "purescript-js-timers": "^3.0.0",
+    "purescript-pipes": "^4.0.0"
+  }
+}

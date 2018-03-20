@@ -1,0 +1,37 @@
+{
+  "name": "purescript-node-streams",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/purescript-node/purescript-node-streams.git"
+  },
+  "devDependencies": {
+    "purescript-console": "^3.0.0",
+    "purescript-assert": "^3.0.0",
+    "purescript-partial": "^1.2.0"
+  },
+  "dependencies": {
+    "purescript-eff": "^3.0.0",
+    "purescript-node-buffer": "^3.0.0",
+    "purescript-prelude": "^3.0.0",
+    "purescript-either": "^3.0.0",
+    "purescript-exceptions": "^3.0.0"
+  },
+  "homepage": "https://github.com/purescript-node/purescript-node-streams",
+  "version": "3.2.0",
+  "_release": "3.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.2.0",
+    "commit": "ada88666be36f0167dec06f4a94ee6e8d8836fea"
+  },
+  "_source": "https://github.com/purescript-node/purescript-node-streams.git",
+  "_target": "^3.0.0",
+  "_originalSource": "purescript-node-streams"
+}

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Oskar Wickström">
+  <title>PureScript Spec - The Guide</title>
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:400,400i,700" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/tomorrow.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" href="docs.css">
+</head>
+<body itemscope itemtype="http://schema.org/TechArticle">
+<header>
+<h1 class="title" itemprop="name">PureScript Spec - The Guide</h1>
+<cite class="author" itemprop="author">By Oskar Wickström</cite>
+</header>
+<figure id="header-image">
+  <img src="https://raw.githubusercontent.com/owickstrom/purescript-spec/master/example.png" width="400" />
+</figure>
+<h2 id="contents">Contents</h2>
+<nav id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#writing-specs">Writing Specs</a><ul>
+<li><a href="#full-example">Full Example</a></li>
+<li><a href="#combining-specs">Combining Specs</a></li>
+<li><a href="#running-a-subset-of-the-specs">Running A Subset of the Specs</a></li>
+<li><a href="#quickcheck">QuickCheck</a></li>
+</ul></li>
+<li><a href="#running">Running</a><ul>
+<li><a href="#reporters">Reporters</a></li>
+<li><a href="#passing-runner-configuration">Passing Runner Configuration</a></li>
+<li><a href="#automatically-discovering-specs">Automatically Discovering Specs</a></li>
+<li><a href="#browser-testing">Browser Testing</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a><ul>
+<li><a href="#contribute">Contribute</a></li>
+</ul></li>
+</ul>
+</nav>
+<h2 id="introduction">Introduction</h2>
+<p><em>PureScript Spec</em> is a simple testing framework for Purescript, inspired by <a href="http://hspec.github.io/">hspec</a>. Use PureScript Spec to write synchronous and asynchronous tests using a simple DSL, combine with other testing tools, and generate test output in various formats.</p>
+<h2 id="installation">Installation</h2>
+<p>Given that you already have a PureScript project setup, the first thing to do is installing <code>purescript-spec</code> as a <em>development dependency</em>.</p>
+<pre class="bash"><code>bower install --save-dev purescript-spec</code></pre>
+<h2 id="writing-specs">Writing Specs</h2>
+<p>The basic building block of spec writing is <code>it</code>, which creates a spec with a <em>spec body</em>. Spec bodies have the type <code>Aff r Unit</code>, which is similar to the <code>Eff</code> type, but with the addition of asynchronicity. When specs are run, they are considered successful, or <em>passing</em>, if the Aff computation does not result in an error. For more information, see <a href="https://github.com/slamdata/purescript-aff">purescript-aff</a>.</p>
+<p>In the following example we use <code>pure unit</code> as a body, which does nothing. It will not throw an error, and the spec will always pass.</p>
+<pre class="purescript"><code>it &quot;does nothing&quot; $ pure unit</code></pre>
+<p>A more interesting test would assert something. Let’s check that addition works!</p>
+<pre class="purescript"><code>it &quot;adds 1 and 1&quot; do
+  1 + 1 `shouldEqual` 2</code></pre>
+<p>The <code>shouldEqual</code> function, here used as an infix operator, takes two values and checks if they are equal. If not, it throws an error in the Aff monad, causing the spec to fail.</p>
+<p>Specs can also be <em>pending</em>, which means that they are not testing anything yet - they are like placeholders. We use <code>pending</code> to write a pending spec.</p>
+<pre class="purescript"><code>pending &quot;calculates the answer to Life, the Universe and Everything&quot;</code></pre>
+<p>Pending specs can also contain a spec body, just like with <code>it</code>. The difference is that the body will be ignored. Pending spec bodies are used to give a hint what the spec should assert in the future. Use <code>pending'</code> (note the <code>'</code> at the end) to create a pending spec with a body.</p>
+<pre class="purescript"><code>pending&#39; &quot;calculates the answer to Life, the Universe and Everything&quot; do
+  answerTo theUltimateQuestion `shouldBe` 42</code></pre>
+<p>To group multiple specs in a logically related group of specs, we use <code>describe</code>. This creates a new spec which represents the named group.</p>
+<pre class="purescript"><code>describe &quot;MyModule&quot; do
+  it &quot;...&quot; do
+    ...
+  it &quot;...&quot; do
+    ...
+  it &quot;...&quot; do
+    ...</code></pre>
+<p>Spec groups can be nested in multiple levels, creating a hierarchy of named groups.</p>
+<pre class="purescript"><code>describe &quot;MyModule&quot; $
+  describe &quot;SubModule&quot; $
+    describe &quot;Database&quot; do
+      it &quot;...&quot; do
+        ...
+      it &quot;...&quot; do
+        ...
+      it &quot;...&quot; do
+        ...</code></pre>
+<h3 id="full-example">Full Example</h3>
+<p>Let’s look at an example of a complete spec program, with the needed imports and a proper <code>main</code> function. The specs shown in the <a href="#header-image">header image</a> looks like this:</p>
+<pre class="purescript"><code>module Main where
+
+import Prelude
+import Control.Monad.Aff (later&#39;)
+import Control.Monad.Eff (Eff)
+import Test.Spec (pending, describe, it)
+import Test.Spec.Assertions (shouldEqual)
+import Test.Spec.Reporter.Console (consoleReporter)
+import Test.Spec.Runner (RunnerEffects, run)
+
+main :: Eff (RunnerEffects ()) Unit
+main = run [consoleReporter] do
+  describe &quot;purescript-spec&quot; do
+    describe &quot;Attributes&quot; do
+      it &quot;awesome&quot; do
+        let isAwesome = true
+        isAwesome `shouldEqual` true
+      pending &quot;feature complete&quot;
+    describe &quot;Features&quot; do
+      it &quot;runs in NodeJS&quot; $ pure unit
+      it &quot;runs in the browser&quot; $ pure unit
+      it &quot;supports streaming reporters&quot; $ pure unit
+      it &quot;supports async specs&quot; do
+        res &lt;- later&#39; 100 $ pure &quot;Alligator&quot;
+        res `shouldEqual` &quot;Alligator&quot;
+      it &quot;is PureScript 0.10.x compatible&quot; $ pure unit</code></pre>
+<p><code>RunnerEffects</code> is a convenience type alias that includes the effect rows used by the Node runner, meaning you do not have to type them all out if you want to have a type annotation for your <code>main</code> function. You can pass any extra effect rows used in your own tests:</p>
+<pre class="purescript"><code>main :: Eff (RunnerEffects (random :: RANDOM, buffer :: BUFFER)) Unit</code></pre>
+<h3 id="combining-specs">Combining Specs</h3>
+<p>You can split specs into multiple files and combine them using regular monadic bind, e.g. with <code>do</code> expressions.</p>
+<pre class="purescript"><code>baseSpecs = do
+  mathSpec
+  stringsSpec
+  arraySpec
+  ...</code></pre>
+<p>This is often used to combine all specs into a single spec that can be passed to the test runner, if not using <a href="https://github.com/owickstrom/purescript-spec-discovery">purescript-spec-discovery</a>.</p>
+<h3 id="running-a-subset-of-the-specs">Running A Subset of the Specs</h3>
+<p>Sometimes you do not wish to run all specs. It might be that you are working on a certain feature, and only want to see the results for the relevant tests. It can also be that some spec takes a lot of time, and you wish to exclude it temporarily. By using <code>itOnly</code> instead of the regular <code>it</code>, the test runner includes only that spec.</p>
+<pre class="purescript"><code>describe &quot;My API&quot; do
+  itOnly &quot;does feature X&quot; ... -- only this spec will run
+  it &quot;does things that takes a lot of time&quot;</code></pre>
+<p>Similar to <code>itOnly</code>, <code>describeOnly</code> makes the runner include only that group.</p>
+<pre class="purescript"><code>describe &quot;Module&quot; do
+  describeOnly &quot;Sub Module A&quot; -- only this group will run
+    it &quot;does feature X&quot; ...
+  describe &quot;Sub Module B&quot;
+    it &quot;does feature Y&quot; ...</code></pre>
+<h3 id="quickcheck">QuickCheck</h3>
+<p>You can use <a href="https://github.com/purescript/purescript-quickcheck">QuickCheck</a> together with the <a href="https://github.com/owickstrom/purescript-spec-quickcheck">purescript-spec-quickcheck</a> adapter to get nice output formatting for QuickCheck tests.</p>
+<h2 id="running">Running</h2>
+<p>When you have a spec, you need a runner to actually run it and get the results. PureScript Spec comes with a NodeJS runner, <code>run</code>, which takes an array of <em>reporters</em> and a spec to run. What you get back is a test-running program of type <code>Eff r ()</code>. The effect rows in <code>r</code> depend on what you do in your specs and what reporters you are using. The program can be run using <a href="https://github.com/bodil/pulp">Pulp</a>.</p>
+<pre class="bash"><code>pulp test</code></pre>
+<p>If you’re not using pulp, you can compile the test program using <code>psc</code>. The following command compiles all PureScript modules in <code>test</code> and <code>src</code>.</p>
+<pre class="bash"><code>psc -o output/tests &#39;test/**/*.purs&#39; &#39;src/**/*.purs&#39;</code></pre>
+<p>After that has finished, you can run the test program using NodeJS.</p>
+<pre><code>NODE_PATH=output/tests node -e &quot;require(&#39;Test.Main&#39;).main();&quot;</code></pre>
+<p><strong>NOTE:</strong> A test program using <code>Test.Spec.Runner.run</code> cannot be browserified and run in the browser, it requires NodeJS. To run your tests in a browser, see <a href="#browser-testing">Browser Testing</a> below.</p>
+<h3 id="reporters">Reporters</h3>
+<p>Reporters can be passed to the runner, e.g. <code>run [reporter1, ..., reporterN] spec</code>. Currently there are these reporters available:</p>
+<ul>
+<li><code>consoleReporter</code> in <code>Test.Spec.Reporter.Console</code></li>
+<li><code>dotReporter</code> in <code>Test.Spec.Reporter.Dot</code></li>
+<li><code>specReporter</code> in <code>Test.Spec.Reporter.Spec</code></li>
+<li><code>tapReporter</code> in <code>Test.Spec.Reporter.Tap</code></li>
+<li><a href="https://github.com/owickstrom/purescript-spec-reporter-xunit">purescript-spec-reporter-xunit</a></li>
+</ul>
+<h3 id="passing-runner-configuration">Passing Runner Configuration</h3>
+<p>In addition to the regular <code>run</code> function, there is also <code>run'</code>, which takes a <code>Config</code> record.</p>
+<pre class="purescript"><code>main = run&#39; testConfig [consoleReporter] mySpec
+  where
+    testConfig = { slow: 5000, timeout: Just 10000 }</code></pre>
+<p>The <code>Test.Spec.Runner</code> module provides a <code>defaultConfig</code> value which you can use to override only specific values.</p>
+<pre class="purescript"><code>main = run&#39; testConfig [consoleReporter] mySpec
+  where
+    testConfig = defaultConfig { slow = 100 }</code></pre>
+<h3 id="automatically-discovering-specs">Automatically Discovering Specs</h3>
+<p>If you are running your specs in an NodeJS environment, e.g. with <code>pulp test</code>, you can automatically scan for spec modules using <a href="https://github.com/owickstrom/purescript-spec-discovery">purescript-spec-discovery</a>. Then your <code>main</code> function can be as simple as:</p>
+<pre class="purescript"><code>main = discover &quot;My\\.Package\\..*Spec&quot; &gt;&gt;= run [consoleReporter]</code></pre>
+<p>All modules matching the pattern, that has a <code>spec :: Spec r ()</code> definition will be combined into a single large spec by <code>discover</code>.</p>
+<h3 id="browser-testing">Browser Testing</h3>
+<p>You can run tests in a browser environment, instead of NodeJS, using <code>mocha</code> or <code>karma</code>. For more information, see <a href="https://github.com/owickstrom/purescript-spec-mocha">purescript-spec-mocha</a>.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p><a href="https://pursuit.purescript.org/packages/purescript-spec">purescript-spec on Pursuit</a> features version information and API documentation. For updates on the project, follow <a href="https://twitter.com/owickstrom">@owickstrom</a> at Twitter.</p>
+<p>The source code is available <a href="https://github.com/owickstrom/purescript-spec">on GitHub</a>.</p>
+<h3 id="contribute">Contribute</h3>
+<p>If you have any issues or possible improvements please file them as <a href="https://github.com/owickstrom/purescript-spec/issues">GitHub Issues</a>. Pull requests are encouraged.</p>
+<footer>
+  PureScript Spec is licensed under the MIT license.
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+<script src="highlight.js"></script>
+</body>
+</html>

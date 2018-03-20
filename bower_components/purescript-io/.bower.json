@@ -1,0 +1,34 @@
+{
+  "name": "purescript-io",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-aff": "^3.0.0",
+    "purescript-control": "^3.0.0",
+    "purescript-eff": "^3.1.0",
+    "purescript-exceptions": "^3.0.0",
+    "purescript-monoid": "^3.0.0",
+    "purescript-newtype": "^2.0.0",
+    "purescript-prelude": "^3.0.0",
+    "purescript-tailrec": "^3.1.0",
+    "purescript-transformers": "^3.4.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
+  },
+  "homepage": "https://github.com/slamdata/purescript-io",
+  "version": "4.1.0",
+  "_release": "4.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.1.0",
+    "commit": "da1a00aed3d3e3d5d1184a4fddf2aec653108fc8"
+  },
+  "_source": "https://github.com/slamdata/purescript-io.git",
+  "_target": "^4.0.0",
+  "_originalSource": "purescript-io"
+}

@@ -1,0 +1,29 @@
+{
+  "name": "purescript-monad-loops",
+  "homepage": "https://github.com/mlang/purescript-monad-loops",
+  "description": "A collection of loop operators for use in monads",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mlang/purescript-monad-loops.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.0.0",
+    "purescript-monoid": "^3.0.0",
+    "purescript-tailrec": "^3.0.0",
+    "purescript-maybe": "^3.0.0",
+    "purescript-tuples": "^4.0.0",
+    "purescript-lists": "^4.0.1"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0",
+    "purescript-transformers": "^3.2.0",
+    "purescript-assert": "^3.0.0"
+  }
+}
